@@ -5,7 +5,7 @@ module FBO
     extend Forwardable
 
     attr_reader     :file
-    def_delegators  :@file, :open, :readline, :read, :path, :to_path, :eof?
+    def_delegators  :@file, :readline, :read, :eof?, :gets
 
     class << self
       def filename_for_date(date)
@@ -26,7 +26,6 @@ module FBO
     end
 
     private
-
 
     def cleanup_data(data)
       data.encode('UTF-16le', :invalid => :replace, :replace => '')

@@ -1,0 +1,328 @@
+module FBO
+  grammar Dump
+
+    # Non-domain structural elements
+    #
+    rule dumpfile
+      notice* <DumpNode>
+    end
+
+    rule notice
+      presol / combine / amdcss / mod / award / ja / itb / fairopp / srcsgt /
+      fstd / snote / ssale / epsupload / delete / archive / unarchive
+    end
+
+    rule body
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      body_tag? body_tag? body_tag? body_tag? body_tag? body_tag? body_tag?
+      <BodyNode>
+    end
+
+    rule tag_open
+      '<' tag_name '>'
+    end
+
+    rule tag_close
+      '</' ( notice_tag_name / 'FILELIST' / 'FILE' ) '>'
+    end
+
+    rule end_of_tag
+      space &( tag_open / tag_close / end_of_buffer )
+    end
+
+    rule tag_content
+      ( !end_of_tag ( . / "\n" ) )* <TagContentNode>
+    end
+
+    rule not_end_of_tag
+      . !end_of_tag
+    end
+
+    rule space
+      [ \t\n\r]+
+    end
+
+    rule end_of_buffer
+      !.
+    end
+
+
+    # Domain constants
+    #
+    rule notice_tag_name
+      'PRESOL' / 'COMBINE' / 'AMDCSS' / 'MOD' / 'AWARD' / 'JA' / 'ITB' /
+      'FAIROPP' / 'SRCSGT' / 'FSTD' / 'SNOTE' / 'SSALE' / 'EPSUPLOAD' /
+      'DELETE' / 'ARCHIVE' / 'UNARCHIVE'
+    end
+
+    rule body_tag_name
+      'DATE' / 'YEAR' / 'CBAC' / 'PASSWORD' / 'ZIP' / 'CLASSCOD' / 'NAICS' /
+      'OFFADD' / 'CONTACT' / 'SUBJECT' / 'DESC' / 'SOLNBR' / 'NTYPE' /
+      'RESPDATE' / 'ARCHDATE' / 'LINK' / 'URL' / 'DESC' / 'EMAIL' / 'ADDRESS' /
+      'DESC' / 'FILELIST' / 'FILE' / 'URL' / 'MIMETYPE' / 'DESC' / 'FILE' /
+      'SETASIDE' / 'POPADDRESS' / 'POPZIP' / 'POPCOUNTRY' / 'CORRECTION' /
+      'AWDNBR' / 'AWDAMT' / 'LINENBR' / 'AWDDATE' / 'AWARDEE' / 'AWARDEE_DUNS' /
+      'STAUTH' / 'AWDNBR' / 'MODNBR' / 'USERID' / 'PROJID' / 'UPLOADTYPE' /
+      'DONBR' / 'FOJA' / 'RESPONSEDATE' / 'AGENCY'
+    end
+
+    rule tag_name
+      notice_tag_name / body_tag_name
+    end
+
+
+    # Notice types
+    #
+    rule presol
+      '<PRESOL>' space? body '</PRESOL>' space? <PresolicitationNode>
+    end
+
+    rule combine
+      '<COMBINE>' space? body '</COMBINE>' space? <CombinedSolicitationNode>
+    end
+
+    rule amdcss
+      '<AMDCSS>' space? body '</AMDCSS>' space? <AmendmentNode>
+    end
+
+    rule mod
+      '<MOD>' space? body '</MOD>' space? <ModificationNode>
+    end
+
+    rule award
+      '<AWARD>' space? body '</AWARD>' space? <AwardNode>
+    end
+
+    rule ja
+      '<JA>' space? body '</JA>' space? <JustificationAndApprovalNode>
+    end
+
+    rule itb
+      '<ITB>' space? body '</ITB>' space? <IntentToBundleNode>
+    end
+
+    rule fairopp
+      '<FAIROPP>' space? body '</FAIROPP>' space? <FairOpportunityNode>
+    end
+
+    rule srcsgt
+      '<SRCSGT>' space? body '</SRCSGT>' space? <SourcesSoughtNode>
+    end
+
+    rule fstd
+      '<FSTD>' space? body '</FSTD>' space? <ForeignStandardNode>
+    end
+
+    rule snote
+      '<SNOTE>' space? body '</SNOTE>' space? <SpecialNoticeNode>
+    end
+
+    rule ssale
+      '<SSALE>' space? body '</SSALE>' space? <SaleOfSurplusNode>
+    end
+
+    rule epsupload
+      '<EPSUPLOAD>' space? body '</EPSUPLOAD>' space? <DocumentUploadNode>
+    end
+
+    rule delete
+      '<DELETE>' space? body '</DELETE>' space? <DocumentDeletingNode>
+    end
+
+    rule archive
+      '<ARCHIVE>' space? body '</ARCHIVE>' space? <DocumentArchivalNode>
+    end
+
+    rule unarchive
+      '<UNARCHIVE>' space? body '</UNARCHIVE>' space? <DocumentUnarchivalNode>
+    end
+
+
+    # Body tags
+    #
+    rule body_tag
+      date / year / zip / agency / office / location / classcod / naics /
+      offadd / subject / solnbr / respdate / contact / desc / link / url /
+      setaside / popcountry / popzip / popaddress / archdate / ntype / awdnbr /
+      awdamt / linenbr / awardee / awardeeduns / awddate / email /
+      email_address / stauth / foja / donbr / cbac / password / projid /
+      uploadtype / filelist / file / mimetype / correction
+    end
+
+    rule date
+      '<DATE>' space? tag_content end_of_tag <DateNode>
+    end
+
+    rule year
+      '<YEAR>' space? tag_content end_of_tag <YearNode>
+    end
+
+    rule cbac
+      ( '<CBAC>' / '<USERID>' ) space? tag_content end_of_tag <CBACNode>
+    end
+
+    rule password
+      '<PASSWORD>' space? tag_content end_of_tag <PasswordNode>
+    end
+
+    rule zip
+      '<ZIP>' space? tag_content end_of_tag <ZipNode>
+    end
+
+    rule agency
+      '<AGENCY>' space? tag_content end_of_tag <AgencyNode>
+    end
+
+    rule office
+      '<OFFICE>' space? tag_content end_of_tag <OfficeNode>
+    end
+
+    rule location
+      '<LOCATION>' space? tag_content end_of_tag <LocationNode>
+    end
+
+    rule classcod
+      '<CLASSCOD>' space? tag_content end_of_tag <ClassificationCodeNode>
+    end
+
+    rule naics
+      '<NAICS>' space? tag_content end_of_tag <NaicsCodeNode>
+    end
+
+    rule offadd
+      '<OFFADD>' space? tag_content end_of_tag <OfficeAddressNode>
+    end
+
+    rule subject
+      '<SUBJECT>' space? tag_content end_of_tag <SubjectNode>
+    end
+
+    rule solnbr
+      '<SOLNBR>' space? tag_content end_of_tag <SolicitationNumberNode>
+    end
+
+    rule respdate
+      ( '<RESPDATE>' / '<RESPONSEDATE>' ) space? tag_content end_of_tag <ResponseDateNode>
+    end
+
+    rule archdate
+      '<ARCHDATE>' space? tag_content end_of_tag <ArchiveDateNode>
+    end
+
+    rule contact
+      '<CONTACT>' space? tag_content end_of_tag <ContactNode>
+    end
+
+    rule desc
+      '<DESC>' space? tag_content end_of_tag <DescriptionNode>
+    end
+
+    rule link
+      '<LINK>' space? url? desc? url? <LinkNode> 
+    end
+
+    rule url
+      '<URL>' space? tag_content end_of_tag <UrlNode>
+    end
+
+    rule setaside
+      '<SETASIDE>' space? tag_content end_of_tag <SetAsideNode>
+    end
+
+    rule popcountry
+      '<POPCOUNTRY>' space? tag_content end_of_tag <PopCountryNode>
+    end
+
+    rule popzip
+      '<POPZIP>' space? tag_content end_of_tag <PopZipNode>
+    end
+
+    rule popaddress
+      '<POPADDRESS>' space? tag_content end_of_tag <PopAddressNode>
+    end
+
+    rule ntype
+      '<NTYPE>' space? tag_content end_of_tag <NoticeTypeNode>
+    end
+
+    rule awdnbr
+      '<AWDNBR>' space? tag_content end_of_tag <AwardNumberNode>
+    end
+
+    rule awdamt
+      '<AWDAMT>' space? tag_content end_of_tag <AwardAmountNode>
+    end
+
+    rule awddate
+      '<AWDDATE>' space? tag_content end_of_tag <AwardDateNode>
+    end
+
+    rule linenbr
+      '<LINENBR>' space? tag_content end_of_tag <LineNumberNode>
+    end
+
+    rule awardee
+      '<AWARDEE>' space? tag_content end_of_tag <AwardeeNode>
+    end
+
+    rule awardeeduns
+      '<AWARDEEDUNS>' space? tag_content end_of_tag <AwardeeDunsNode>
+    end
+
+    rule email_address
+      ( '<EMAIL>' / '<ADDRESS>' ) space? tag_content end_of_tag <EmailAddressNode>
+    end
+
+    rule email
+      '<EMAIL>' space? email_address? desc? email_address? <EmailNode>
+    end
+
+    rule stauth
+      '<STAUTH>' space? tag_content end_of_tag <StatutoryAuthorityNode>
+    end
+
+    rule foja
+      '<FOJA>' space? tag_content end_of_tag <JustificationAuthorityNode>
+    end
+
+    rule donbr
+      '<DONBR>' space? tag_content end_of_tag <DeliveryOrderNumberNode>
+    end
+
+    rule projid
+      '<PROJID>' space? tag_content end_of_tag <ProjectIDNode>
+    end
+
+    rule uploadtype
+      '<UPLOADTYPE>' space? tag_content end_of_tag <UploadTypeNode>
+    end
+
+    rule filelist
+      '<FILELIST>' space? file? space? file? space? '</FILELIST>' space? <FileListNode>
+    end
+
+    rule file
+      '<FILE>' space? url? desc? mimetype? url? desc? url? mimetype? desc? space? '</FILE>' <FileNode>
+    end
+
+    rule mimetype
+      '<MIMETYPE>' space? tag_content end_of_tag <MimeTypeNode>
+    end
+
+    rule correction
+      '<CORRECTION>' space? tag_content end_of_tag <CorrectionNode>
+    end
+
+    rule modnbr
+      '<MODNBR>' space? tag_content end_of_tag <ModificationNumberNode>
+    end
+  end
+end

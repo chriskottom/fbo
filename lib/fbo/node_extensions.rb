@@ -10,14 +10,9 @@ module FBO
     # Node types corresponding to 
     #
     class NoticeNode < Treetop::Runtime::SyntaxNode
-      @@index = 0
-      @@start_time = Time.now
-
-      def initialize(input, interval, elements = nil)
-        @@index += 1
-        super
-        puts "#{ @@index.to_s.rjust(4) }  Created new #{ self.class.name } ( #{ Time.now - @@start_time } )"
-        @@start_time = Time.now
+      def to_hash
+        body_node = elements.first
+        Hash[ body_node.elements.map { |e| [ e.to_sym, e.value ] } ]
       end
     end
     class PresolicitationNode < NoticeNode; end
@@ -37,50 +32,79 @@ module FBO
     class DocumentArchivalNode < NoticeNode; end
     class DocumentUnarchivalNode < NoticeNode; end
 
-    # Literals for tags within notices
+    # Simple property nodes have a name/symbol and a value
     #
-    class DateNode < Treetop::Runtime::SyntaxNode; end
-    class YearNode < Treetop::Runtime::SyntaxNode; end
-    class AgencyNode < Treetop::Runtime::SyntaxNode; end
-    class OfficeNode < Treetop::Runtime::SyntaxNode; end
-    class LocationNode < Treetop::Runtime::SyntaxNode; end
-    class ZipNode < Treetop::Runtime::SyntaxNode; end
-    class ClassificationCodeNode < Treetop::Runtime::SyntaxNode; end
-    class NaicsCodeNode < Treetop::Runtime::SyntaxNode; end
-    class OfficeAddressNode < Treetop::Runtime::SyntaxNode; end
-    class SubjectNode < Treetop::Runtime::SyntaxNode; end
-    class SolicitationNumberNode < Treetop::Runtime::SyntaxNode; end
-    class NoticeTypeNode < Treetop::Runtime::SyntaxNode; end
-    class ResponseDateNode < Treetop::Runtime::SyntaxNode; end
-    class ArchiveDateNode < Treetop::Runtime::SyntaxNode; end
-    class ContactNode < Treetop::Runtime::SyntaxNode; end
-    class DescriptionNode < Treetop::Runtime::SyntaxNode; end
-    class LinkNode < Treetop::Runtime::SyntaxNode; end
-    class UrlNode < Treetop::Runtime::SyntaxNode; end
-    class EmailNode < Treetop::Runtime::SyntaxNode; end
-    class EmailAddressNode < Treetop::Runtime::SyntaxNode; end
-    class SetAsideNode < Treetop::Runtime::SyntaxNode; end
-    class PopAddressNode < Treetop::Runtime::SyntaxNode; end
-    class PopZipNode < Treetop::Runtime::SyntaxNode; end
-    class PopCountryNode < Treetop::Runtime::SyntaxNode; end
-    class AwardNumberNode < Treetop::Runtime::SyntaxNode; end
-    class AwardAmountNode < Treetop::Runtime::SyntaxNode; end
-    class LineNumberNode < Treetop::Runtime::SyntaxNode; end
-    class AwardDateNode < Treetop::Runtime::SyntaxNode; end
-    class AwardeeNode < Treetop::Runtime::SyntaxNode; end
-    class AwardeeDunsNode < Treetop::Runtime::SyntaxNode; end
-    class CorrectionNode < Treetop::Runtime::SyntaxNode; end
-    class FileListNode < Treetop::Runtime::SyntaxNode; end
-    class FileNode < Treetop::Runtime::SyntaxNode; end
-    class MimeTypeNode < Treetop::Runtime::SyntaxNode; end
-    class StatutoryAuthorityNode < Treetop::Runtime::SyntaxNode; end
-    class ModificationNumberNode < Treetop::Runtime::SyntaxNode; end
-    class DeliveryOrderNumberNode < Treetop::Runtime::SyntaxNode; end
-    class JustificationAuthorityNode < Treetop::Runtime::SyntaxNode; end
-    class CBACNode < Treetop::Runtime::SyntaxNode; end
-    class PasswordNode < Treetop::Runtime::SyntaxNode; end
-    class ProjectIDNode < Treetop::Runtime::SyntaxNode; end
-    class UploadTypeNode < Treetop::Runtime::SyntaxNode; end
-    class CorrectionNode < Treetop::Runtime::SyntaxNode; end
+    class SimplePropertyNode < Treetop::Runtime::SyntaxNode
+      def to_sym
+        class_name = self.class.name
+        base_name = class_name.split('::').last
+        base_name.sub!(/Node$/, '')
+        base_name.gsub!(/([^A-Z])([A-Z])/, '\1_\2')
+        base_name.tr!('A-Z', 'a-z')
+        base_name.to_sym
+      end
+
+      def value
+        elements[0].text_value
+      end
+
+      def to_hash
+        { self.to_sym => self.value }
+      end
+    end
+    class DateNode < SimplePropertyNode; end
+    class YearNode < SimplePropertyNode; end
+    class AgencyNode < SimplePropertyNode; end
+    class OfficeNode < SimplePropertyNode; end
+    class LocationNode < SimplePropertyNode; end
+    class ZipNode < SimplePropertyNode; end
+    class ClassificationCodeNode < SimplePropertyNode; end
+    class NaicsCodeNode < SimplePropertyNode; end
+    class OfficeAddressNode < SimplePropertyNode; end
+    class SubjectNode < SimplePropertyNode; end
+    class SolicitationNumberNode < SimplePropertyNode; end
+    class NoticeTypeNode < SimplePropertyNode; end
+    class ResponseDateNode < SimplePropertyNode; end
+    class ArchiveDateNode < SimplePropertyNode; end
+    class ContactNode < SimplePropertyNode; end
+    class DescriptionNode < SimplePropertyNode; end
+    class UrlNode < SimplePropertyNode; end
+    class EmailAddressNode < SimplePropertyNode; end
+    class SetAsideNode < SimplePropertyNode; end
+    class PopAddressNode < SimplePropertyNode; end
+    class PopZipNode < SimplePropertyNode; end
+    class PopCountryNode < SimplePropertyNode; end
+    class AwardNumberNode < SimplePropertyNode; end
+    class AwardAmountNode < SimplePropertyNode; end
+    class LineNumberNode < SimplePropertyNode; end
+    class AwardDateNode < SimplePropertyNode; end
+    class AwardeeNode < SimplePropertyNode; end
+    class AwardeeDunsNode < SimplePropertyNode; end
+    class CorrectionNode < SimplePropertyNode; end
+    class FileNode < SimplePropertyNode; end
+    class MimeTypeNode < SimplePropertyNode; end
+    class StatutoryAuthorityNode < SimplePropertyNode; end
+    class ModificationNumberNode < SimplePropertyNode; end
+    class DeliveryOrderNumberNode < SimplePropertyNode; end
+    class JustificationAuthorityNode < SimplePropertyNode; end
+    class CBACNode < SimplePropertyNode; end
+    class PasswordNode < SimplePropertyNode; end
+    class ProjectIDNode < SimplePropertyNode; end
+    class UploadTypeNode < SimplePropertyNode; end
+    class CorrectionNode < SimplePropertyNode; end
+
+
+    # Complex properties may contain other simple properties
+    #
+    class ComplexPropertyNode < SimplePropertyNode
+      def value
+        value_hash = {}
+        elements.each { |e| value_hash.merge(e.to_hash) }
+        value_hash
+      end
+    end
+    class LinkNode < ComplexPropertyNode; end
+    class EmailNode < ComplexPropertyNode; end
+    class FileListNode < ComplexPropertyNode; end
   end
 end

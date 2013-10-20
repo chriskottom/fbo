@@ -80,7 +80,7 @@ module FBO
 
     def each_node(nodes)
       nodes.each do |node|
-        yield node.to_hash
+        yield node.to_hash.merge({ type: node.type })
       end
     end
   end

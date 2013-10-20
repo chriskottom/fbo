@@ -15,22 +15,86 @@ module FBO
         Hash[ body_node.elements.map { |e| [ e.to_sym, e.value ] } ]
       end
     end
-    class PresolicitationNode < NoticeNode; end
-    class CombinedSolicitationNode < NoticeNode; end
-    class AmendmentNode < NoticeNode; end
-    class ModificationNode < NoticeNode; end
-    class AwardNode < NoticeNode; end
-    class JustificationAndApprovalNode < NoticeNode; end
-    class IntentToBundleNode < NoticeNode; end
-    class FairOpportunityNode < NoticeNode; end
-    class SourcesSoughtNode < NoticeNode; end
-    class ForeignStandardNode < NoticeNode; end
-    class SpecialNoticeNode < NoticeNode; end
-    class SaleOfSurplusNode < NoticeNode; end
-    class DocumentUploadNode < NoticeNode; end
-    class DocumentDeletingNode < NoticeNode; end
-    class DocumentArchivalNode < NoticeNode; end
-    class DocumentUnarchivalNode < NoticeNode; end
+    class PresolicitationNode < NoticeNode
+      def type
+        :presol
+      end
+    end
+    class CombinedSolicitationNode < NoticeNode
+      def type
+        :combine
+      end
+    end
+    class AmendmentNode < NoticeNode
+      def type
+        :amdcss
+      end
+    end
+    class ModificationNode < NoticeNode
+      def type
+        :mod
+      end
+    end
+    class AwardNode < NoticeNode
+      def type
+        :award
+      end
+    end
+    class JustificationAndApprovalNode < NoticeNode
+      def type
+        :ja
+      end
+    end
+    class IntentToBundleNode < NoticeNode
+      def type
+        :itb
+      end
+    end
+    class FairOpportunityNode < NoticeNode
+      def type
+        :fairopp
+      end
+    end
+    class SourcesSoughtNode < NoticeNode
+      def type
+        :srcsgt
+      end
+    end
+    class ForeignStandardNode < NoticeNode
+      def type
+        :fstd
+      end
+    end
+    class SpecialNoticeNode < NoticeNode
+      def type
+        :snote
+      end
+    end
+    class SaleOfSurplusNode < NoticeNode
+      def type
+        :ssale
+      end
+    end
+    class DocumentUploadNode < NoticeNode
+      def type
+        :epsupload
+      end
+    end
+    class DocumentDeletingNode < NoticeNode
+      def type
+        :delete
+      end
+    end
+    class DocumentArchivalNode < NoticeNode
+      def type
+        :archive
+      end
+    end
+    class DocumentUnarchivalNode < NoticeNode
+      def type
+        :unarchive
+      end
+    end
 
     # Simple property nodes have a name/symbol and a value
     #

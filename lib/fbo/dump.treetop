@@ -35,15 +35,11 @@ module FBO
     end
 
     rule end_of_tag
-      space &( tag_open / tag_close / end_of_buffer )
+      space? &( tag_open / tag_close / end_of_buffer )
     end
 
     rule tag_content
       ( !end_of_tag ( . / "\n" ) )* <TagContentNode>
-    end
-
-    rule not_end_of_tag
-      . !end_of_tag
     end
 
     rule space
@@ -66,16 +62,16 @@ module FBO
     rule body_tag_name
       'DATE' / 'YEAR' / 'CBAC' / 'PASSWORD' / 'ZIP' / 'CLASSCOD' / 'NAICS' /
       'OFFADD' / 'CONTACT' / 'SUBJECT' / 'DESC' / 'SOLNBR' / 'NTYPE' /
-      'RESPDATE' / 'ARCHDATE' / 'LINK' / 'URL' / 'DESC' / 'EMAIL' / 'ADDRESS' /
-      'DESC' / 'FILELIST' / 'FILE' / 'URL' / 'MIMETYPE' / 'DESC' / 'FILE' /
-      'SETASIDE' / 'POPADDRESS' / 'POPZIP' / 'POPCOUNTRY' / 'CORRECTION' /
-      'AWDNBR' / 'AWDAMT' / 'LINENBR' / 'AWDDATE' / 'AWARDEE' / 'AWARDEE_DUNS' /
-      'STAUTH' / 'AWDNBR' / 'MODNBR' / 'USERID' / 'PROJID' / 'UPLOADTYPE' /
-      'DONBR' / 'FOJA' / 'RESPONSEDATE' / 'AGENCY'
+      'RESPDATE' / 'ARCHDATE' / 'LINK' / 'URL' / 'EMAIL' / 'ADDRESS' /
+      'FILELIST' / 'FILE' / 'URL' / 'MIMETYPE' / 'SETASIDE' / 'POPADDRESS' /
+      'POPZIP' / 'POPCOUNTRY' / 'CORRECTION' / 'AWDNBR' / 'AWDAMT' / 'LINENBR' /
+      'AWDDATE' / 'AWARDEEDUNS' / 'AWARDEE_DUNS' / 'AWARDEE' / 'STAUTH' /
+      'MODNBR' / 'USERID' / 'PROJID' / 'UPLOADTYPE' / 'DONBR' / 'FOJA' /
+      'RESPONSEDATE' / 'AGENCY' / 'LOCATION' / 'OFFICE'
     end
 
     rule tag_name
-      notice_tag_name / body_tag_name
+      body_tag_name / notice_tag_name
     end
 
 
@@ -152,7 +148,7 @@ module FBO
       date / year / zip / agency / office / location / classcod / naics /
       offadd / subject / solnbr / respdate / contact / desc / link / url /
       setaside / popcountry / popzip / popaddress / archdate / ntype / awdnbr /
-      awdamt / linenbr / awardee / awardeeduns / awddate / email /
+      awdamt / linenbr / awardee / awardee_duns / awddate / email /
       email_address / stauth / foja / donbr / cbac / password / projid /
       uploadtype / filelist / file / mimetype / correction
     end
@@ -273,8 +269,8 @@ module FBO
       '<AWARDEE>' space? tag_content end_of_tag <AwardeeNode>
     end
 
-    rule awardeeduns
-      '<AWARDEEDUNS>' space? tag_content end_of_tag <AwardeeDunsNode>
+    rule awardee_duns
+      ( '<AWARDEEDUNS>' / '<AWARDEE_DUNS>' ) space? tag_content end_of_tag <AwardeeDunsNode>
     end
 
     rule email_address

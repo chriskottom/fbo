@@ -93,13 +93,12 @@ module FBO
     class UploadTypeNode < SimplePropertyNode; end
     class CorrectionNode < SimplePropertyNode; end
 
-
     # Complex properties may contain other simple properties
     #
     class ComplexPropertyNode < SimplePropertyNode
       def value
         value_hash = {}
-        elements.each { |e| value_hash.merge(e.to_hash) }
+        elements.each { |e| value_hash.merge!(e.to_hash) }
         value_hash
       end
     end

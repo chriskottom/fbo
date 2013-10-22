@@ -31,5 +31,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'minitest', '~> 4.7.5'
   spec.add_development_dependency 'mocha'
-  spec.add_development_dependency 'turn'
 end

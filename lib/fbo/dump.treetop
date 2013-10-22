@@ -148,9 +148,9 @@ module FBO
       date / year / zip / agency / office / location / classcod / naics /
       offadd / subject / solnbr / respdate / contact / desc / link / url /
       setaside / popcountry / popzip / popaddress / archdate / ntype / awdnbr /
-      awdamt / linenbr / awardee / awardee_duns / awddate / email /
+      awdamt / linenbr / awardee_duns / awardee / awddate / email /
       email_address / stauth / foja / donbr / cbac / password / projid /
-      uploadtype / filelist / file / mimetype / correction
+      uploadtype / filelist / file / mimetype / correction / modnbr
     end
 
     rule date

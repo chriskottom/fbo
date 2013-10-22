@@ -13,7 +13,6 @@ module FBO
     def parse(data = nil)
       data ||= @file.contents
 
-      puts "Class = #{ data.class.name }"
       if data.respond_to? :each
         @tree = parse_collection(data)
       else

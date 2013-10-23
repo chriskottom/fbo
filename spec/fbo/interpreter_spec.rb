@@ -3,10 +3,10 @@ require 'spec_helper'
 describe FBO::Interpreter do
   let(:filename)  { File.join(File.dirname(__FILE__), '..', 'fixtures', 'FBOFeed20130331') }
   let(:file)      { FBO::File.new(filename) }
-  let(:tree)      { FBO::Parser.new(file).parse }
+  let(:chunked)   { FBO::ChunkedFile.new(file) }
   let(:actor)     { stub('Act on ALL the Notices', process: nil) }
 
-  subject         { FBO::Interpreter.new(tree) }
+  subject         { FBO::Interpreter.new(chunked) }
 
   describe '#each_notice' do
     it 'acts on each notice' do

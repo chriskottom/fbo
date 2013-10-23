@@ -9,9 +9,6 @@ module FBO
 
 
     DEFAULT_CHUNK_SIZE    = 250 * 1024   # 250KB
-    NOTICE_TAG_NAMES      = %w( PRESOL COMBINE AMDCSS MOD AWARD JA ITB FAIROPP FSTD) +
-                            %w( SRCSGT SNOTE SSALE EPSUPLOAD DELETE ARCHIVE UNARCHIVE )
-    NOTICE_CLOSE_REGEXP   = /<\/(#{ NOTICE_TAG_NAMES.join('|') })>$/
 
 
     def initialize(file, chunk_size = DEFAULT_CHUNK_SIZE)
@@ -46,12 +43,12 @@ module FBO
       end while (chunk.bytesize < @chunk_size)
 
       # Add lines up to the end of a notice.
-      if line && line !~ NOTICE_CLOSE_REGEXP
+      if line && line !~ FBO::NOTICE_CLOSE_REGEXP
         begin
           line = gets
           break unless line
           chunk += line
-          break if line =~ NOTICE_CLOSE_REGEXP
+          break if line =~ FBO::NOTICE_CLOSE_REGEXP
         end while (true)
       end
 

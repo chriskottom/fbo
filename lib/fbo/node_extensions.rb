@@ -14,84 +14,88 @@ module FBO
         body_node = elements.first
         Hash[ body_node.elements.map { |e| [ e.to_sym, e.value ] } ]
       end
+
+      def type
+        self.class.type
+      end
     end
     class PresolicitationNode < NoticeNode
-      def type
+      def self.type
         :presol
       end
     end
     class CombinedSolicitationNode < NoticeNode
-      def type
+      def self.type
         :combine
       end
     end
     class AmendmentNode < NoticeNode
-      def type
+      def self.type
         :amdcss
       end
     end
     class ModificationNode < NoticeNode
-      def type
+      def self.type
         :mod
       end
     end
     class AwardNode < NoticeNode
-      def type
+      def self.type
         :award
       end
     end
     class JustificationAndApprovalNode < NoticeNode
-      def type
+      def self.type
         :ja
       end
     end
     class IntentToBundleNode < NoticeNode
-      def type
+      def self.type
         :itb
       end
     end
     class FairOpportunityNode < NoticeNode
-      def type
+      def self.type
         :fairopp
       end
     end
     class SourcesSoughtNode < NoticeNode
-      def type
+      def self.type
         :srcsgt
       end
     end
     class ForeignStandardNode < NoticeNode
-      def type
+      def self.type
         :fstd
       end
     end
     class SpecialNoticeNode < NoticeNode
-      def type
+      def self.type
         :snote
       end
     end
     class SaleOfSurplusNode < NoticeNode
-      def type
+      def self.type
         :ssale
       end
     end
     class DocumentUploadNode < NoticeNode
-      def type
+      def self.type
         :epsupload
       end
     end
     class DocumentDeletingNode < NoticeNode
-      def type
+      def self.type
         :delete
       end
     end
     class DocumentArchivalNode < NoticeNode
-      def type
+      def self.type
         :archive
       end
     end
     class DocumentUnarchivalNode < NoticeNode
-      def type
+      def self.type
         :unarchive
       end
     end

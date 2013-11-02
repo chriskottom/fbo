@@ -1,9 +1,10 @@
 module FBO
   class Interpreter
     class << self
-      def notice_enumeration(name, type = nil)
+      def notice_enumeration(name, type)
         define_method(name) do |&block|
-          selected = ( type ? notice_nodes.select { |n| n.is_a? type } : notice_nodes )
+          selected = notice_nodes(type)
+          return unless selected
           selected.each do |node|
             block.call node.to_hash.merge({ type: node.type })
           end
@@ -11,23 +12,23 @@ module FBO
       end
     end
 
-    notice_enumeration :each_notice, nil
-    notice_enumeration :each_presolicitation, FBO::Dump::PresolicitationNode
-    notice_enumeration :each_combined_solicitation, FBO::Dump::CombinedSolicitationNode
-    notice_enumeration :each_amendment, FBO::Dump::AmendmentNode
-    notice_enumeration :each_modification, FBO::Dump::ModificationNode
-    notice_enumeration :each_award, FBO::Dump::AwardNode
-    notice_enumeration :each_justification_and_approval, FBO::Dump::JustificationAndApprovalNode
-    notice_enumeration :each_intent_to_bundle, FBO::Dump::IntentToBundleNode
-    notice_enumeration :each_fair_opportunity, FBO::Dump::FairOpportunityNode
-    notice_enumeration :each_sources_sought, FBO::Dump::SourcesSoughtNode
-    notice_enumeration :each_foreign_standard, FBO::Dump::ForeignStandardNode
-    notice_enumeration :each_special_notice, FBO::Dump::SpecialNoticeNode
-    notice_enumeration :each_sale_of_surplus, FBO::Dump::SaleOfSurplusNode
-    notice_enumeration :each_document_upload, FBO::Dump::DocumentUploadNode
-    notice_enumeration :each_document_delete, FBO::Dump::DocumentDeletingNode
-    notice_enumeration :each_document_archival, FBO::Dump::DocumentArchivalNode
-    notice_enumeration :each_document_unarchival, FBO::Dump::DocumentUnarchivalNode
+    notice_enumeration :each_notice, :all
+    notice_enumeration :each_presolicitation, :presol
+    notice_enumeration :each_combined_solicitation, :combine
+    notice_enumeration :each_amendment, :amdcss
+    notice_enumeration :each_modification, :mod
+    notice_enumeration :each_award, :award
+    notice_enumeration :each_justification_and_approval, :ja
+    notice_enumeration :each_intent_to_bundle, :itb
+    notice_enumeration :each_fair_opportunity, :fairopp
+    notice_enumeration :each_sources_sought, :srcsgt
+    notice_enumeration :each_foreign_standard, :fstd
+    notice_enumeration :each_special_notice, :snote
+    notice_enumeration :each_sale_of_surplus, :ssale
+    notice_enumeration :each_document_upload, :epsupload
+    notice_enumeration :each_document_delete, :delete
+    notice_enumeration :each_document_archival, :archive
+    notice_enumeration :each_document_unarchival, :unarchive
 
     def initialize(file)
       @file = file
@@ -35,16 +36,41 @@ module FBO
 
     private
 
-    def parse
-      tree = FBO::Parser.new(@file).parse
-      @notice_nodes = tree.elements
+    def notice_nodes(type = :all)
+      if @notice_nodes.nil?
+        @notice_nodes = {}
+      end
+
+      if @file.is_a?(FBO::SegmentedFile) && type != :all
+        @notice_nodes[type] = parse_segment(type)
+      else
+        @notice_nodes[:all] = parse_file
+        if type == :all
+          @notice_nodes[:all]
+        else
+          @notice_nodes[type] = @notice_nodes[:all].select { |n| n.type == type }
+        end
+      end
     end
 
-    def notice_nodes
-      if @notice_nodes.nil?
-        parse
+    def parse_file
+      tree = FBO::Parser.new(@file).parse
+      tree.elements
+    end
+
+    def parse_segment(type = :all)
+      return unless @file.is_a? FBO::SegmentedFile
+
+      content = ""
+      if type == :all
+        content = @file.contents
+      else
+        content = @file.contents_for_type(type)
       end
-      @notice_nodes
+      return unless content
+
+      tree = FBO::Parser.new.parse(content)
+      tree.elements
     end
   end
 end

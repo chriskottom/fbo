@@ -6,7 +6,7 @@ Treetop.load(::File.join(base_path, './dump.treetop'))
 
 module FBO
   class Parser
-    def initialize(file)
+    def initialize(file = nil)
       @file = file
     end
 

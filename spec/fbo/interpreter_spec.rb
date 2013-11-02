@@ -69,4 +69,37 @@ describe FBO::Interpreter do
       end
     end
   end
+
+  context 'with input FBO::SegmentedFile' do
+    let(:segmented) { FBO::SegmentedFile.new(file) }
+    subject         { FBO::Interpreter.new(segmented) }
+
+    describe '#each_notice' do
+      it 'acts on each notice' do
+        actor.expects(:process).with(instance_of(Hash)).times(8)
+        subject.each_notice { |n| actor.process(n) }
+      end
+    end
+
+    describe '#each_presolicitation' do
+      it 'acts on each PRESOL notice' do
+        actor.expects(:process).with(has_entry(solicitation_number: 'SPE4A713R0795'))
+        subject.each_presolicitation { |n| actor.process(n) }
+      end
+    end
+
+    describe '#each_sources_sought' do
+      it 'acts on each SRCSGT notice' do
+        actor.expects(:process).with(has_entry(solicitation_number: 'W5J9JE-13-S-0002'))
+        subject.each_sources_sought { |n| actor.process(n) }
+      end
+    end
+
+    describe '#each_special_notice' do
+      it 'does nothing (no SNOTE notices)' do
+        actor.expects(:process).never
+        subject.each_special_notice { |n| actor.process(n) }
+      end
+    end
+  end
 end

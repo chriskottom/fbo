@@ -1,11 +1,11 @@
 require 'forwardable'
 
 module FBO
-  class ChunkedFile
+  class ChunkedFile < File
     extend Forwardable
 
     attr_reader     :file, :chunk_size
-    def_delegators  :@file, :readline, :read, :eof?
+    def_delegators  :@file, :eof?, :eof
 
 
     DEFAULT_CHUNK_SIZE    = 250 * 1024   # 250KB
@@ -19,7 +19,7 @@ module FBO
     def contents
       if @contents.nil?
         @contents = []
-        while !eof?
+        while !eof
           @contents << next_chunk
         end
         @contents.compact!
@@ -31,7 +31,7 @@ module FBO
     private
 
     def next_chunk
-      return nil if eof?
+      return nil if eof
 
       chunk, line = "", ""
 
@@ -40,7 +40,7 @@ module FBO
         line = gets
         break unless line
         chunk += line
-      end while (chunk.bytesize < @chunk_size)
+      end while (chunk.bytesize < @chunk_size && !eof)
 
       # Add lines up to the end of a notice.
       if line && line !~ FBO::NOTICE_CLOSE_REGEXP
@@ -49,23 +49,10 @@ module FBO
           break unless line
           chunk += line
           break if line =~ FBO::NOTICE_CLOSE_REGEXP
-        end while (true)
+        end while (!eof)
       end
 
       return chunk.strip
-    end
-
-    def gets
-      line = file.gets
-      return unless line
-      cleanup_data(line)
-    end
- 
-    def cleanup_data(data)
-      data.encode('UTF-16le', :invalid => :replace, :replace => '')
-          .encode('UTF-8')
-          .gsub(/\r\n/, "\n")
-          .gsub(/^M/, "")
     end
   end
 end

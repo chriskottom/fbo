@@ -38,7 +38,7 @@ describe FBO::RemoteFile do
     end
 
     it 'should to open the file and read its contents' do
-      subject.readline.wont_be_nil
+      subject.gets.wont_be_nil
     end
   end
 

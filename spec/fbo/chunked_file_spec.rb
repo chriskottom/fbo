@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe FBO::ChunkedFile do
-  let(:filename)   { File.join(File.dirname(__FILE__), '..', 'fixtures', 'FBOFeed20131003') }
+  let(:filename)   { File.join(File.dirname(__FILE__), '..', 'fixtures', 'FBOFeed20131013') }
   let(:file)       { FBO::File.new(filename) }
-  let(:chunk_size) { 50 * 1024 }   # 50KB
+  let(:chunk_size) { 25 * 1024 }   # 25KB
   subject          { FBO::ChunkedFile.new(file, chunk_size) }
 
   describe '#contents' do

@@ -1,11 +1,11 @@
 require 'forwardable'
 
 module FBO
-  class SegmentedFile
+  class SegmentedFile < File
     extend Forwardable
 
     attr_reader     :file
-    def_delegators  :@file, :readline, :read, :eof?
+    def_delegators  :@file, :eof?, :eof
 
 
     def initialize(file)

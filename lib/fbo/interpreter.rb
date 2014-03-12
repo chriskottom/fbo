@@ -5,8 +5,19 @@ module FBO
       @parser = Parser.new
     end
 
-    # Walk through the file returning each notice text block and structure.
+    # Walk through all notices in the given file.
+    # For each notice, yield passing the text block and structure as args.
+    #
+    def each_notice(&block)
+      while true
+        string, structure = next_notice(&block)
+        break unless string
+      end
+    end
+
+    # Get the next notice from the file.
     # If a block is given, yield passing the text block and structure as args.
+    # Return the text and structure.
     #
     def next_notice(&block)
       return unless notice_text = next_notice_string

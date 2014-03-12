@@ -1,76 +1,47 @@
 module FBO
   class Interpreter
-    class << self
-      def notice_enumeration(name, type)
-        define_method(name) do |&block|
-          selected = notice_nodes(type)
-          return unless selected
-          selected.each do |node|
-            block.call node.to_hash.merge({ type: node.type })
-          end
-        end
-      end
-    end
-
-    notice_enumeration :each_notice, :all
-    notice_enumeration :each_presolicitation, :presol
-    notice_enumeration :each_combined_solicitation, :combine
-    notice_enumeration :each_amendment, :amdcss
-    notice_enumeration :each_modification, :mod
-    notice_enumeration :each_award, :award
-    notice_enumeration :each_justification_and_approval, :ja
-    notice_enumeration :each_intent_to_bundle, :itb
-    notice_enumeration :each_fair_opportunity, :fairopp
-    notice_enumeration :each_sources_sought, :srcsgt
-    notice_enumeration :each_foreign_standard, :fstd
-    notice_enumeration :each_special_notice, :snote
-    notice_enumeration :each_sale_of_surplus, :ssale
-    notice_enumeration :each_document_upload, :epsupload
-    notice_enumeration :each_document_delete, :delete
-    notice_enumeration :each_document_archival, :archive
-    notice_enumeration :each_document_unarchival, :unarchive
-
     def initialize(file)
       @file = file
+      @parser = Parser.new
     end
+
+    # Walk through the file returning each notice text block and structure.
+    # If a block is given, yield passing the text block and structure as args.
+    #
+    def next_notice(&block)
+      return unless notice_text = next_notice_string
+      return if notice_text.empty?
+
+      notice_node = parse_notice(notice_text)
+      yield notice_text, notice_node if block_given?
+      return notice_text, notice_node
+    end
+
 
     private
 
-    def notice_nodes(type = :all)
-      if @notice_nodes.nil?
-        @notice_nodes = {}
-      end
+    # Get the next whole notice from the FBO dump file.
+    # Return an empty string if no more exist
+    #
+    def next_notice_string
+      return if @file.eof?
 
-      if @file.is_a?(FBO::SegmentedFile) && type != :all
-        @notice_nodes[type] = parse_segment(type)
-      else
-        @notice_nodes[:all] = parse_file
-        if type == :all
-          @notice_nodes[:all]
-        else
-          @notice_nodes[type] = @notice_nodes[:all].select { |n| n.type == type }
-        end
+      line, entry_string = '', ''
+      while !@file.eof
+        line = @file.gets
+        break unless line
+        next unless line =~ /\S/
+        entry_string += line
+        break if line =~ FBO::NOTICE_CLOSE_REGEXP
       end
+      return entry_string.strip
     end
 
-    def parse_file
-      tree = FBO::Parser.new(@file).parse
-      tree.elements
-    end
-
-    def parse_segment(type = :all)
-      return unless @file.is_a? FBO::SegmentedFile
-
-      content = ""
-      if type == :all
-        content = @file.contents
-      else
-        content = @file.contents_for_type(type)
-      end
-      return unless content
-
-      tree = FBO::Parser.new.parse(content)
-      tree.elements
+    # Parse the text to extract a structure of data for the notice.
+    #
+    def parse_notice(text)
+      tree = @parser.parse(text)
+      tree.elements.first
     end
   end
 end

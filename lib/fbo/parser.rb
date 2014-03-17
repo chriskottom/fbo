@@ -33,7 +33,8 @@ module FBO
         line = parser.failure_line
         column = parser.failure_column
         reason = parser.failure_reason
-        raise Exception, "Parse error at line #{ line }, column #{ column }: #{ reason }"
+        raise FBO::ParserError.new("Could not parse data: line #{ line }, column #{ column }, reason '#{ reason }'",
+                                   data:data)
       end
       clean_tree(tree)
     end

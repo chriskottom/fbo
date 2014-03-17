@@ -7,7 +7,7 @@ describe FBO::Parser do
     subject        { FBO::Parser.new(file) }
 
     it 'parses the data all at once' do
-      subject.expects(:parse_string).with(file.contents)      
+      subject.expects(:parse_string).with(file.contents)
       subject.parse
     end
 
@@ -47,6 +47,26 @@ describe FBO::Parser do
       notice_types.must_equal [ 'FBO::Dump::AmendmentNode',
                                 'FBO::Dump::CombinedSolicitationNode',
                                 'FBO::Dump::PresolicitationNode' ]
+    end
+  end
+
+  context 'a bad String' do
+    let(:contents) { "<PRESOL>\n</PRESOL>\n<COMBINE>\n<COMBINE>\n</COMBINE>\n<AMDCSS>\n</AMDCSS>\n" }
+    let(:file)     { stub('FBO::File', contents: contents) }
+    subject        { FBO::Parser.new(file) }
+
+    it 'raises a ParserError' do
+      proc { subject.parse }.must_raise FBO::ParserError
+    end
+  end
+
+  context 'a collection of data with a bad String' do
+    let(:contents) { [ '<PRESOL></PRESOL>', '<COMBINE><COMBINE></COMBINE>', '<AMDCSS></AMDCSS>' ] }
+    let(:file)     { stub('FBO::ChunkedFile', contents: contents) }
+    subject        { FBO::Parser.new(file) }
+
+    it 'raises a ParserError' do
+      proc { subject.parse }.must_raise FBO::ParserError
     end
   end
 end

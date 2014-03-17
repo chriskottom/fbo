@@ -51,7 +51,7 @@ module FBO
     # Parse the text to extract a structure of data for the notice.
     #
     def parse_notice(text)
-      tree = @parser.parse(text)
+      tree = @parser.parse(text) 
       tree.elements.first
     end
   end

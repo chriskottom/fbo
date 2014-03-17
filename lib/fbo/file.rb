@@ -5,7 +5,7 @@ module FBO
     extend Forwardable
 
     attr_reader     :file
-    def_delegators  :@file, :eof?, :eof
+    def_delegators  :@file, :eof?, :eof, :to_path
 
     class << self
       def filename_for_date(date)

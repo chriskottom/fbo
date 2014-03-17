@@ -159,7 +159,6 @@ module FBO
     class PasswordNode < SimplePropertyNode; end
     class ProjectIDNode < SimplePropertyNode; end
     class UploadTypeNode < SimplePropertyNode; end
-    class CorrectionNode < SimplePropertyNode; end
 
     # Complex properties may contain other simple properties
     #

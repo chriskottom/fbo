@@ -28,10 +28,10 @@ describe FBO::File do
     let(:filename)   { File.join(File.dirname(__FILE__), '..', 'fixtures', 'FBOFeed20130331') }
     subject          { FBO::File.new(filename) }
 
-    it 'enables access to file contents' do 
+    it 'enables access to file contents' do
       subject.contents.must_be_instance_of String
       subject.contents.wont_be_empty
-      subject.contents.must_match /^<PRESOL>\n<DATE>0331/
+      subject.contents.must_match %r{^<PRESOL>\n<DATE>0331}
     end
   end
 end

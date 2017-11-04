@@ -27,8 +27,8 @@ describe FBO::SegmentedFile do
     end
 
     it 'must start and end with a PRESOL' do
-      presol_contents.must_match /^<PRESOL>/m
-      presol_contents.must_match /<\/PRESOL>$/m
+      presol_contents.must_match %r{^<PRESOL>}m
+      presol_contents.must_match %r{<\/PRESOL>$}m
     end
 
     it 'should not contain other notice types' do

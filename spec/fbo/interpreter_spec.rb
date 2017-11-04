@@ -24,8 +24,8 @@ describe FBO::Interpreter do
       string, structure = subject.next_notice { |str, struct| actor.process(str, struct) }
       actor.verify
 
-      string.must_match /^\<PRESOL\>/
-      string.must_match /\<SOLNBR\>SPE4A713R0795/
+      string.must_match %r{^\<PRESOL\>}
+      string.must_match %r{\<SOLNBR\>SPE4A713R0795}
       structure.type.must_equal :presol
       structure.to_hash[:solicitation_number].must_equal 'SPE4A713R0795'
     end

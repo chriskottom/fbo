@@ -52,11 +52,11 @@ module FBO
       end
       super_tree
     end
-    
+
     def clean_tree(node)
       return if node.elements.nil?
-      node.elements.delete_if { |node| node.class.name == "Treetop::Runtime::SyntaxNode" }
-      node.elements.each { |node| clean_tree(node) }
+      node.elements.delete_if { |el| el.class.name == "Treetop::Runtime::SyntaxNode" }
+      node.elements.each { |el| clean_tree(el) }
       node
     end
   end

@@ -24,10 +24,7 @@ module FBO
     end
 
     def contents
-      if @contents.nil?
-        @contents = cleanup_data(@file.read)
-      end
-      @contents
+      @contents ||= cleanup_data(@file.read)
     end
 
     protected

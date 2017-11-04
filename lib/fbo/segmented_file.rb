@@ -27,32 +27,39 @@ module FBO
           match_data = @file.contents.match(regexp)
           matched_text = cleanup_data( match_data ? match_data.to_s : nil)
           instance_variable_set(variable_name, matched_text)
-       end
+        end
         instance_variable_get(variable_name)
       end
     end
 
     def contents
-      if @contents.nil?
-        @contents = [ presol_contents, combine_contents, amdcss_contents,
-                      mod_contents, award_contents, ja_contents, itb_contents,
-                      fairopp_contents, srcsgt_contents, fstd_contents,
-                      snote_contents, ssale_contents, epsupload_contents,
-                      delete_contents, archive_contents, unarchive_contents ]
-        @contents.compact!
-        #@contents = @file.contents
-      end
-      @contents
+      @contents ||= [
+        presol_contents,
+        combine_contents,
+        amdcss_contents,
+        mod_contents,
+        award_contents,
+        ja_contents,
+        itb_contents,
+        fairopp_contents,
+        srcsgt_contents,
+        fstd_contents,
+        snote_contents,
+        ssale_contents,
+        epsupload_contents,
+        delete_contents,
+        archive_contents,
+        unarchive_contents ].compact
     end
 
     def contents_for_type(type)
       return unless type
       method_name = "#{ type }_contents"
-      self.respond_to?(method_name) ? self.send(method_name) : nil 
+      self.respond_to?(method_name) ? self.send(method_name) : nil
     end
 
     private
- 
+
     def cleanup_data(data)
       return if data.nil?
       data.encode('UTF-16le', :invalid => :replace, :replace => '')

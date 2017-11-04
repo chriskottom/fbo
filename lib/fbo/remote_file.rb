@@ -22,7 +22,7 @@ module FBO
     protected
 
     def fetch_file(filename)
-      Dir.mkdir(@tmp_dir) unless Dir.exists?(@tmp_dir)
+      Dir.mkdir(@tmp_dir) unless Dir.exist?(@tmp_dir)
       tmp_filename = ::File.join(@tmp_dir, filename)
       ftp = Net::FTP.new(FTP_SERVER)
       ftp.login

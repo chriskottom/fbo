@@ -21,11 +21,10 @@ The gem in its current state handles most of the notice types described in the
 * Document Unarchival (UNARCHIVE)
 
 Two notice types have not yet been implemented as no record of their ever having
-been used could be found in any of the FBO dump files dating back as far as 2001.
-These are:
+been used could be found in any of the FBO dump files dating back as far as
+2001. These are:
 * Document Upload (EPSUPLOAD)
 * Document Deleting (DELETE)
-
 
 ## Installation
 
@@ -43,9 +42,41 @@ Or install it yourself as:
 
 ## Usage
 
-The gem provides a number of 
+The gem includes a basic command line processor that accepts a file:
 
+    bundle exec bin/fbo_parser -f FBOFeed20171102
 
+The source code for `fbo_parser` provides a model for using the gem in your own
+projects.
+
+Start by creating a new `FBO::File` to wrap the FBO feed file that you want to
+work with.
+
+    file = FBO::File.new(filename)
+
+Next, create a new `FBO::Interpreter` using the file you created:
+
+    interpreter = FBO::Interpreter.new(file)
+
+The interpreter allows you to iterate through the notices in your dump file,
+passing both the raw text and the parsed notice as parameters to the yielded
+block.  To get at the data values from the notice, convert the structure into a
+Hash and access the attributes individually as:
+
+    interpreter.each_notice do |text, notice|
+      hash = notice.to_hash
+      sol_nbr = hash[:solicitation_number]
+      subject = hash[:subject]
+      puts notice.type.to_s
+      puts "#{ text.length.to_s.rjust(9) } chars"
+      puts "#{ sol_nbr.ljust(40) }  #{ subject }"
+      puts
+    end
+
+The attributes available for each notice vary quite a bit between notice types
+and even notices of the same type since the
+[specification](https://www.fbo.gov/downloads/fbo_web_services_technical_documentation.pdf)
+is not always clear as to which are mandatory and which are optional.
 
 ## Contributing
 

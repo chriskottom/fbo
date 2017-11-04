@@ -2,17 +2,13 @@ require 'rubygems'
 require 'bundler/setup'
 
 require 'fbo'
-require 'minitest/autorun'
+require 'fivemat/minitest/autorun'
 require 'mocha/setup'
-require 'turn/autorun'
 
-Turn.config do |c|   
-  c.format = :outline
-  c.trace = 8
-  c.natural = true
-end
+require "minitest/rg"
+require "fivemat/minitest"
 
-module MiniTest
+module Minitest
   class Spec
     class << self
       alias_method :context, :describe
